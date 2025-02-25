@@ -3,3 +3,5 @@ uvicorn
 openai-whisper
 langdetect
 yt_dlp
+google-genai
+

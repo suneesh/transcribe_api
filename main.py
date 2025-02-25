@@ -34,7 +34,7 @@ async def transcribe_audio(file: UploadFile = File(...), key: str = Form(...)):
     #         return JSONResponse(content={"key": key, "transcription": "API unavailable"})
 
 @app.post("/summarize/")
-async def summarize_text(text: str = Form(...), key: str = Form(...), key: language = Form(...)):
+async def summarize_text(text: str = Form(...), key: str = Form(...), language: str = Form(...)):
     try:
         client = genai.Client(api_key=key)
 
