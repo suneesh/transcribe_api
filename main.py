@@ -4,8 +4,18 @@ import json
 from fastapi.responses import JSONResponse
 import whisper
 from google import genai
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust this to specify allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 model = whisper.load_model("base")
 
 @app.post("/transcribe/")
