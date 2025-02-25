@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+api/
+env/
+
+# FastAPI and Python dependencies
+*.log
+*.sqlite3
+*.db
+
+# Ignore IDE settings
+.vscode/
+.idea/
+*.iml
+
+# Environment variables
+.env
+*.env
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# MyPy cache
+.mypy_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
