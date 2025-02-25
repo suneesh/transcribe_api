@@ -3,9 +3,10 @@ import io
 import json
 from fastapi.responses import JSONResponse
 import whisper
+from google import genai
 
 app = FastAPI()
-model = whisper.get_model("base")
+model = whisper.load_model("base")
 
 @app.post("/transcribe/")
 async def transcribe_audio(file: UploadFile = File(...), key: str = Form(...)):
@@ -33,11 +34,35 @@ async def transcribe_audio(file: UploadFile = File(...), key: str = Form(...)):
     #         return JSONResponse(content={"key": key, "transcription": "API unavailable"})
 
 @app.post("/summarize/")
-async def summarize_text(text: str = Form(...), key: str = Form(...)):
+async def summarize_text(text: str = Form(...), key: str = Form(...), key: language = Form(...)):
     try:
-        summary = summarize(text)
-        return JSONResponse(content={"key": key, "summary": summary})
+        client = genai.Client(api_key=key)
+
+        if language == 'en':
+          prompt = 'You are an expert in medical summarisation and report creation,\
+                    vital for doctors who depend on you to accurately condense conversations with patients into concise,\
+                    structured summaries in british english. Strive for excellence to meet their needs,\
+                    as your work is crucial to their careers.'
+        elif language == 'ja':
+          prompt = 'You are an expert in medical summarisation and report creation in japaneese,\
+                    vital for doctors who depend on you to accurately condense conversations with patients into concise,\
+                    structured summaries in japaneese. Strive for excellence to meet their needs,\
+                    as your work is crucial to their careers.'
+        else:
+          prompt = 'You are an expert in medical summarisation and report creation,\
+                    vital for doctors who depend on you to accurately condense conversations with patients into concise,\
+                    structured summaries in british english. Strive for excellence to meet their needs,\
+                    as your work is crucial to their careers.'
+        
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+        
+            contents=f"{prompt} Summerize {text} to key points",
+        )
+
+        print(response.text)
+        return JSONResponse(content={ "summary": response.text })
     except ValueError:
-        return JSONResponse(content={"key": key, "summary": "Could not generate summary"})
+        return JSONResponse(content={"summary": "Could not generate summary"})
 
 # Run using: uvicorn filename:app --reload
