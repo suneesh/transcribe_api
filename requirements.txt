@@ -4,4 +4,5 @@ openai-whisper
 langdetect
 yt_dlp
 google-genai
+python-multipart
 

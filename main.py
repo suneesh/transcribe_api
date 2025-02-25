@@ -12,12 +12,22 @@ model = whisper.load_model("base")
 async def transcribe_audio(file: UploadFile = File(...), key: str = Form(...)):
     
     try:
-        result = model.transcribe(file)
-        return JSONResponse(content={"key": key, "transcription": result})
-    except ValueError:
-        return JSONResponse(content={"key": key, "transcription": "Could not transcribe audio"})
+        # Read file content into memory
+        audio_content = await file.read()
+        audio_file = io.BytesIO(audio_content)
+        
+        # Save the audio file temporarily
+        temp_audio_path = "temp_audio.mp3"
+        with open(temp_audio_path, "wb") as f:
+            f.write(audio_file.getbuffer())
+        
+        # Transcribe audio using Whisper
+        result = model.transcribe(temp_audio_path)
+        text = result["text"]
+        
+        return JSONResponse(content={"key": key, "transcription": text})
     except Exception as e:
-        return JSONResponse(content={"key": key, "transcription": str(e)})
+        return JSONResponse(content={"key": key, "transcription": f"Error: {str(e)}"})
     # Read file content into memory
     # audio_content = await file.read()
     # audio_file = io.BytesIO(audio_content)
